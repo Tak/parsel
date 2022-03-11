@@ -1,6 +1,8 @@
+require "date"
+
 module Parsel
   class Parsel
-    SUPPORTED_TOKEN_TYPES = %i[WORD CHANNEL INTEGER TEXT]
+    SUPPORTED_TOKEN_TYPES = %i[WORD CHANNEL INTEGER TEXT DATETIME]
 
     # Tokenizer methods
     # Split the first whitespace-separated chunk from a string
@@ -37,6 +39,15 @@ module Parsel
       raise "End of input reached" unless argument_string && !argument_string.empty?
 
       [argument_string, nil]
+    end
+
+    # Parse a datetime from the beginning of a string
+    # @param argument_string A string beginning with an RFC-3339 datetime parseable by DateTime.parse
+    # @return [parsedDateTime, remainderOfString]
+    # @raise ArgumentError When DateTime parsing fails
+    def self.parse_datetime(argument_string)
+      datetime_string, argument_string = parse_word(argument_string)
+      [DateTime.parse(datetime_string), argument_string]
     end
 
     # Get the appropriate method for parsing a parameter type
